@@ -15,28 +15,23 @@ sources = [
 
 def main():
     while True:
-        tick("https://layouts.painkillergis.com")
+        try:
+            tick("https://layouts.painkillergis.com")
+        except Exception as e:
+            print("Failed to process heightmap", e, file=sys.stderr)
         time.sleep(2.5)
 
 
 def tick(baseURL):
-    try:
-        response = requests.get(f"{baseURL}/v1/layouts?excludeLayoutsWithHeightmap=true")
-        if response.status_code == 200:
-            for layout in response.json():
-                heightmap = generate(sources, layout)
-                with open(heightmap, 'rb') as f:
-                    requests.put(f"{baseURL}/v1/layouts/{layout['id']}/heightmap.jpg", f.read())
-                os.remove(heightmap)
-                os.remove(f"{heightmap}.aux.xml")
-        else:
-            print(
-                "Failed to communicate with layout service",
-                f"got status code: {response.status_code}",
-                file=sys.stderr,
-            )
-    except requests.exceptions.RequestException as e:
-        print("Failed to communicate with layout service", e, file=sys.stderr)
+    response = requests.get(f"{baseURL}/v1/layouts?excludeLayoutsWithHeightmap=true")
+    if response.status_code != 200:
+        raise Exception(f"Got non-2xx status code: {response.status_code}")
+    for layout in response.json():
+        heightmap = generate(sources, layout)
+        with open(heightmap, 'rb') as f:
+            requests.put(f"{baseURL}/v1/layouts/{layout['id']}/heightmap.jpg", f.read())
+        os.remove(heightmap)
+        os.remove(f"{heightmap}.aux.xml")
 
 
 main()
