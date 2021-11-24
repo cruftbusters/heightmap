@@ -16,8 +16,9 @@ sources = [
 ]
 
 async def main():
-    async with websockets.connect("wss://layouts.painkillergis.com/v1/layouts_awaiting") as ws:
+    async with websockets.connect("wss://layouts.painkillergis.com/v1/awaiting_heightmap") as ws:
         while True:
+            await ws.send("")
             layout = json.loads(await ws.recv())
             heightmap = generate(sources, layout)
             with open(heightmap, 'rb') as f:
