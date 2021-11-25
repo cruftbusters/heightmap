@@ -16,6 +16,14 @@ sources = [
 ]
 
 async def main():
+    while True:
+        try:
+            await server()
+        except:
+            print("restarting after exception")
+
+
+async def server():
     async with websockets.connect("wss://layouts.painkillergis.com/v1/awaiting_heightmap") as ws:
         while True:
             await ws.send("")
