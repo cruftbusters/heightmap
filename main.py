@@ -1,8 +1,11 @@
 import json
+import logging
 import os
 import sys
 
 import asyncio
+import time
+
 import requests
 
 import websockets
@@ -15,12 +18,14 @@ sources = [
     for minGroundSpacing, sourcePath in zip(args[::2], args[1::2])
 ]
 
+
 async def main():
     while True:
         try:
             await server()
-        except:
-            print("restarting after exception")
+        except Exception as e:
+            logging.exception(e)
+            time.sleep(1)
 
 
 async def server():
