@@ -33,7 +33,7 @@ async def server():
         while True:
             await ws.send("")
             layout = json.loads(await ws.recv())
-            heightmap = generate(sources, layout)
+            heightmap = generate(sources, layout, 'JPEG')
             with open(heightmap, 'rb') as f:
                 requests.put(f"https://layouts.painkillergis.com/v1/layouts/{layout['id']}/heightmap.jpg", f.read())
             os.remove(heightmap)

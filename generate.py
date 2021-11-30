@@ -6,7 +6,7 @@ import tempfile
 from osgeo import gdal, gdalconst
 
 
-def generate(sources, layout):
+def generate(sources, layout, format):
     width = layout['size']['width']
     height = layout['size']['height']
     left = layout['bounds']['left']
@@ -42,7 +42,7 @@ def generate(sources, layout):
         translate,
         warpSource,
         options=gdal.TranslateOptions(
-            format='JPEG',
+            format=format,
             outputType=gdalconst.GDT_Byte,
             scaleParams=[[minimum, maximum, 0, 255]],
         )
