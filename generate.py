@@ -6,7 +6,7 @@ import tempfile
 from osgeo import gdal, gdalconst
 
 
-def generate(sources, layout, format):
+def generate(sources, layout):
     width = layout['size']['width']
     height = layout['size']['height']
     left = layout['bounds']['left']
@@ -37,21 +37,32 @@ def generate(sources, layout, format):
     minimum = stats[0]
     maximum = stats[1]
 
-    translate = tempfile.mktemp()
+    preview = tempfile.mktemp()
     gdal.Translate(
-        translate,
+        preview,
         warpSource,
         options=gdal.TranslateOptions(
-            format=format,
+            format="JPEG",
             outputType=gdalconst.GDT_Byte,
             scaleParams=[[minimum, maximum, 0, 255]],
+        )
+    )
+
+    heightmap = tempfile.mktemp()
+    gdal.Translate(
+        heightmap,
+        warpSource,
+        options=gdal.TranslateOptions(
+            format="GTiff",
+            outputType=gdalconst.GDT_UInt16,
+            scaleParams=[[minimum, maximum, 0, 65535]],
         )
     )
 
     del warpSource
     gdal.GetDriverByName('GTiff').Delete(warpPath)
 
-    return translate
+    return [preview, heightmap]
 
 
 def selectSourceByGroundSpacing(sources, groundSpacing):
@@ -76,7 +87,7 @@ if __name__ == "__main__":
             "path": '/home/arctair/ws/cruftbusters/heightmap/3dep1/n46w105.img',
         },
     ]
-    heightmap = generate(sources, json.load(sys.stdin))
+    [preview, heightmap] = generate(sources, json.load(sys.stdin))
     with open(heightmap, 'rb') as f:
         sys.stdout.buffer.write(f.read())
     os.remove(heightmap)

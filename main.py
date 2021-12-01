@@ -34,12 +34,12 @@ async def server():
             await ws.send("")
             layout = json.loads(await ws.recv())
 
-            preview = generate(sources, layout, 'JPEG')
+            [preview, heightmap] = generate(sources, layout)
+
             putLayer(layout['id'], "heightmap.jpg", "image/jpeg", preview)
             os.remove(preview)
             os.remove(f"{preview}.aux.xml")
 
-            heightmap = generate(sources, layout, 'GTiff')
             putLayer(layout['id'], "heightmap.tif", "image/tiff", heightmap)
             os.remove(heightmap)
             os.remove(f"{heightmap}.aux.xml")
