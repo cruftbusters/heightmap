@@ -33,12 +33,27 @@ async def server():
         while True:
             await ws.send("")
             layout = json.loads(await ws.recv())
-            heightmap = generate(sources, layout, 'JPEG')
-            with open(heightmap, 'rb') as f:
-                requests.put(f"https://layouts.painkillergis.com/v1/layouts/{layout['id']}/heightmap.jpg", f.read())
+
+            preview = generate(sources, layout, 'JPEG')
+            putLayer(layout['id'], "heightmap.jpg", "image/jpeg", preview)
+            os.remove(preview)
+            os.remove(f"{preview}.aux.xml")
+
+            heightmap = generate(sources, layout, 'GTiff')
+            putLayer(layout['id'], "heightmap.tif", "image/tiff", heightmap)
             os.remove(heightmap)
             os.remove(f"{heightmap}.aux.xml")
+
             await ws.send("")
+
+
+def putLayer(id, name, contentType, layer):
+    with open(layer, 'rb') as f:
+        requests.put(
+            f"https://layouts.painkillergis.com/v1/layouts/{id}/{name}",
+            f.read(),
+            headers={"Content-Type": contentType},
+        )
 
 
 asyncio.run(main())
