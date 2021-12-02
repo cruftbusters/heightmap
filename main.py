@@ -42,7 +42,6 @@ async def server():
 
             putLayer(layout['id'], "heightmap.tif", "image/tiff", heightmap)
             os.remove(heightmap)
-            os.remove(f"{heightmap}.aux.xml")
 
             await ws.send("")
 
