@@ -26,6 +26,7 @@ def generate(sources, layout):
         options=gdal.WarpOptions(
             outputBounds=[left, bottom, right, top],
             outputBoundsSRS="EPSG:3857",
+            outputType=gdalconst.GDT_UInt16,
             width=width,
             height=height,
         )
