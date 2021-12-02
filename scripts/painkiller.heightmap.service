@@ -3,8 +3,6 @@ Description=painkiller/heightmap
 
 [Service]
 ExecStart=/usr/bin/python /home/arctair/painkiller/heightmap/main.py 0 /home/arctair/warehouse/3dep13/3dep13.vrt 30 /home/arctair/warehouse/3dep1/3dep1.vrt
-StandardOutput=file:/home/arctair/painkiller/heightmap/application.log
-StandardError=file:/home/arctair/painkiller/heightmap/error.log
 Type=simple
 WorkingDirectory=/home/arctair/painkiller/heightmap
 
