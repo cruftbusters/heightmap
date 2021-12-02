@@ -33,6 +33,8 @@ async def server():
         while True:
             await ws.send("")
             layout = json.loads(await ws.recv())
+            print(f"generating heightmap for layout {layout['id']}")
+            sys.stdout.flush()
 
             [preview, heightmap] = generate(sources, layout)
 
